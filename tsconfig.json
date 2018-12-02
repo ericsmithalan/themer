@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "declaration": true,
+        "sourceMap": true,
+        //custom
+        "baseUrl": ".",
+        "moduleResolution": "node",
+        "outDir": "build",
+        "rootDir": "src",
+        "typeRoots": ["./node_modules/@types", "./node_modules/typescript-collections/dist"]
+    }
+}

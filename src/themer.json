@@ -1,0 +1,30 @@
+{
+	"dir": "./",
+	"outDir": "./",
+	"renderJS": true,
+	"renderTS": true,
+	"renderCSS": true,
+	"renderSASS": true,
+
+	"colors": [
+		{
+			"baseColors": {
+				"color1": "#000000",
+				"color2": "red"
+			}
+		},
+		{
+			"chromeColors": {
+				"color1": "#000000",
+				"color2": "red"
+			}
+		},
+		{
+			"accentColors": {
+				"color1": "#000000",
+				"color2": "red"
+			}
+		}
+	],
+	"fonts": []
+}

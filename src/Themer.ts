@@ -1,74 +1,36 @@
 #!/usr/bin/env nod
 
-import * as fs from "fs";
 import * as Path from "path";
+import * as fs from "fs";
 
 import { Dictionary } from "typescript-collections";
 import { Helpers } from "./Helpers";
 
 export interface ThemerProps {
-    scssDir: string;
+	files: Dictionary<string, string>;
 }
 
 export class Themer {
-    private readonly _props: ThemerProps;
-    public static defaultProps: ThemerProps = {
-        scssDir: "./scss/"
-    };
+	private COLOR_ROOT_KEY: string = "//@themer: colors";
+	private FONT_ROOT_KEY: string = "//@themer: fonts";
 
-    private readonly _fileName: string;
-    private readonly _fileExt: string;
+	private readonly _props: ThemerProps;
+	private readonly _colors: Dictionary<string, string>;
+	private readonly _fonts: Dictionary<string, string>;
 
-    private readonly _sassColorList: Dictionary<string, string>;
-    private _dirtyResults: string;
-    private _cleanResults: string;
+	public constructor(props?: ThemerProps) {
+		this._props = props;
+		this._colors = new Dictionary<string, string>();
+		this._fonts = new Dictionary<string, string>();
+	}
 
-    public constructor(props?: ThemerProps) {
-        this._props = Object.assign(Themer.defaultProps, props || {});
-        this._sassColorList = new Dictionary<string, string>();
-    }
-
-    private _loaded(results: string) {
-        // this._dirtyResults = results;
-        // this._cleanResults = this._clean(results);
-        // const resultList = this._cleanResults.split(";");
-        // resultList.forEach((item) => {
-        //     const styleList = item.split(":");
-        //     const name = Helpers.toCamelCase(styleList[0]);
-        //     const value = styleList[1];
-        //     this._sassColorList.setValue(name, value);
-        // });
-        // this._sassColorList.forEach((key, item) => {
-        //     console.log(key, item);
-        // });
-    }
-
-    private _clean(results: string): string {
-        // let clean = "";
-        // clean = Helpers.stripComments(results);
-        // clean = Helpers.stripLines(clean);
-        // clean = Helpers.stripSpace(clean);
-        // return clean;
-        return "";
-    }
-
-    private _getSassColors(): string {
-        return "";
-    }
-
-    private _getFileContentString(): Promise<string> {
-        return new Promise((resolve, reject) => {
-            // fs.readFile(this.fullPath, function(err, data) {
-            //     if (err) {
-            //         reject(err);
-            //     }
-            //     const results = data.toString();
-            //     if (results != null || results.length > 0) {
-            //         resolve(results);
-            //     } else {
-            //         reject("file was empty or null");
-            //     }
-            // });
-        });
-    }
+	public async create(files: Dictionary<string, string>): Promise<boolean> {
+		return await new Promise<boolean>((resolve, reject) => {
+			if (files) {
+				files.forEach((key, value) => {
+					const dirtyStr = value;
+				});
+			}
+		});
+	}
 }

@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "cmd": "node ./node_modules/ts-node/dist/bin.js ./src/index.ts",
+        "themer": "node ./node_modules/ts-node/dist/bin.js ./src/index.ts",
         "start": "tsc -p ./ -w",
         "build": "tsc -p ./"
     },

@@ -1,107 +1,98 @@
 #!/usr/bin/env nod
 
-import * as fs from "fs";
+import * as FileSystem from "fs";
+import * as Path from "path";
+
 import { Dictionary } from "typescript-collections";
+import { Helpers } from "./Helpers";
+import { Themer } from "./Themer";
+import { stringify } from "querystring";
 
-export class Themer {
-    private readonly _filesDir: string;
-    private readonly _fileName: string;
-    private readonly _fileExt: string;
+//https://nodejs.org/api/fs.html
 
-    private readonly _sassColorList: Dictionary<string, string>;
-    private _dirtyResults: string;
-    private _cleanResults: string;
+export interface MainArgs {
+    dir: string;
+}
 
-    public constructor() {
-        this._filesDir = "./src/";
-        this._fileName = "colors";
-        this._fileExt = "scss";
-        this._sassColorList = new Dictionary<string, string>();
+export class Main {
+    private readonly _args: MainArgs;
+    private static readonly SASS_EXT: string = ".scss";
+    public static defaultArgs: Partial<MainArgs> = {
+        dir: "./src/scss/"
+    };
 
-        this._getFileContentString().then((results) => {
-            this._loaded(results);
-        });
+    private _filesDictionary: Dictionary<string, string>;
+
+    private _initializer: Promise<boolean>;
+
+    public constructor(args?: MainArgs) {
+        this._args = this._processArgs(args);
+        this._initializer = this._initialize();
     }
 
-    public get fullPath(): string {
-        return `${this._filesDir}${this._fileName}.${this._fileExt}`;
-    }
-
-    private _loaded(results: string) {
-        this._dirtyResults = results;
-        this._cleanResults = this._clean(results);
-
-        const resultList = this._cleanResults.split(";");
-
-        resultList.forEach((item) => {
-            const styleList = item.split(":");
-            const name = this._toCamelCase(styleList[0]);
-            const value = styleList[1];
-
-            this._sassColorList.setValue(name, value);
+    private async _initialize(): Promise<boolean> {
+        console.log("loading...");
+        await this._readDir(this._args.dir).then((results) => {
+            this._load(results);
         });
 
-        this._sassColorList.forEach((key, item) => {
-            console.log(key, item);
+        return true;
+    }
+
+    private _processArgs(args?: MainArgs): MainArgs {
+        let obj: object = args || {};
+
+        process.argv.forEach((val, index) => {
+            if (val.indexOf("=") >= 0) {
+                const item = val.split("=");
+                Object.assign(obj, { [item[0]]: item[1] });
+            }
         });
+
+        return obj as MainArgs;
     }
 
-    private _clean(results: string): string {
-        let clean = "";
+    private _load(results) {
+        this._filesDictionary = results;
 
-        clean = this._stripComments(results);
-        clean = this._stripLines(clean);
-        clean = this._stripSpace(clean);
-
-        return clean;
+        console.log(this._filesDictionary.toString());
     }
 
-    private _stripComments(str: string): string {
-        const regex = /(\/\*[\w\'\s\r\n\*]*\*\/)|(\/\/[\w\s\']*)|(\<![\-\-\s\w\>\/]*\>)/g;
-        const clean = str.replace(regex, "");
+    private async _readDir(path: string): Promise<Dictionary<string, string>> {
+        const self = this;
+        const fileDictionary = new Dictionary<string, string>();
 
-        return clean.trim();
-    }
-
-    private _stripSpace(str: string): string {
-        const regex = /^\s+|\s+$/g;
-        const clean = str.replace(regex, "");
-
-        return clean.trim();
-    }
-
-    private _toCamelCase(str: string): string {
-        const regexLetterAfterDash = /\-[a-z]/g;
-        const regexLetterAfterDollar = /\$[A-Z]/g;
-        const regexDash = /-/g;
-        const regexDollar = /\$/g;
-
-        let clean = str
-            .replace(regexLetterAfterDash, (chr) => {
-                return chr.toUpperCase();
-            })
-            .replace(regexDash, "")
-            .replace(regexLetterAfterDollar, (chr) => {
-                return chr.toLowerCase();
-            })
-            .replace(regexDollar, "");
-
-        return clean.trim();
-    }
-
-    private _stripLines(str: string): string {
-        const regex = /(\r\n|\n|\r)/gm;
-        const clean = str.replace(regex, "");
-
-        return clean.trim();
-    }
-
-    private _getFileContentString(): Promise<string> {
-        return new Promise((resolve, reject) => {
-            fs.readFile(this.fullPath, function(err, data) {
+        return await new Promise<Dictionary<string, string>>((resolve, reject) => {
+            FileSystem.readdir(path, (err, files) => {
                 if (err) {
                     reject(err);
                 }
+
+                if (files && files.length > 0) {
+                    files.forEach(async (file) => {
+                        if (Path.extname(file) === Main.SASS_EXT) {
+                            const results = await self._readFile(`${path}/${file}`);
+                            fileDictionary.setValue(file, results);
+                        }
+                    });
+
+                    resolve(fileDictionary);
+                } else {
+                    reject(`no files found in ${path}`);
+                }
+            });
+        });
+    }
+
+    private async _readFile(file: string): Promise<string> {
+        const self = this;
+        return await new Promise<string>((resolve, reject) => {
+            FileSystem.readFile(file, function(err, data) {
+                if (err) {
+                    reject(err);
+                }
+
+                console.log(`reading file ${file}`);
 
                 const results = data.toString();
 
@@ -113,10 +104,6 @@ export class Themer {
             });
         });
     }
-
-    private _getSassColors(): string {
-        return "";
-    }
 }
 
-new Themer();
+new Main();

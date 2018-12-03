@@ -1,0 +1,58 @@
+{
+	"dir": "./",
+	"outDir": "./",
+	"outFile": "theme",
+	"js": true,
+	"ts": true,
+	"css": true,
+	"sass": true,
+	"themes": [
+		{
+			"name": "light",
+			"colors": [
+				{
+					"key": "baseColors",
+					"color1": "#000000",
+					"color2": "red"
+				},
+				{
+					"key": "chromeColors",
+					"color1": "#000000",
+					"color2": "red"
+				},
+				{
+					"key": "accentColors",
+					"color1": "#000000",
+					"color2": "red"
+				}
+			],
+			"fontFamilies": [],
+			"fontSizes": []
+		},
+		{
+			"name": "dark",
+			"colors": [
+				{
+					"baseColors": {
+						"color1": "#000000",
+						"color2": "red"
+					}
+				},
+				{
+					"chromeColors": {
+						"color1": "#000000",
+						"color2": "red"
+					}
+				},
+				{
+					"accentColors": {
+						"color1": "#000000",
+						"color2": "red"
+					}
+				}
+			],
+			"fontFamilies": [],
+			"fontSizes": []
+		}
+	]
+}
